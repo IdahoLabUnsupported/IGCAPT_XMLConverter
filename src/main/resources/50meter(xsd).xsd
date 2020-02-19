@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Gen">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Nodes">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="node">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="id" type="xs:unsignedByte" />
+                    <xs:element name="type" type="xs:string" />
+                    <xs:element name="enableDataSending" type="xs:boolean" />
+                    <xs:element name="enableDataPassThrough" type="xs:boolean" />
+                    <xs:element name="isAggregate" type="xs:boolean" />
+                    <xs:element maxOccurs="unbounded" name="isCollapsed" type="xs:boolean" />
+                    <xs:element name="payload" type="xs:unsignedShort" />
+                    <xs:element name="maxLatency" type="xs:unsignedShort" />
+                    <xs:element name="xCoord" type="xs:decimal" />
+                    <xs:element name="yCoord" type="xs:decimal" />
+                    <xs:element name="lat" type="xs:decimal" />
+                    <xs:element name="long" type="xs:decimal" />
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="endPoints">
+                      <xs:complexType>
+                        <xs:sequence minOccurs="0">
+                          <xs:element maxOccurs="unbounded" name="endPoint" type="xs:unsignedByte" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Edges">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="edge">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="capacity" type="xs:decimal" />
+                  </xs:sequence>
+                  <xs:attribute name="id" type="xs:unsignedByte" use="required" />
+                  <xs:attribute name="source" type="xs:unsignedByte" use="required" />
+                  <xs:attribute name="target" type="xs:unsignedByte" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
