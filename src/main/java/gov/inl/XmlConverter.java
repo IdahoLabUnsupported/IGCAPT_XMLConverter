@@ -1,197 +1,134 @@
 package gov.inl;
 
-import gov.inl.generated.Gen;
-import gov.inl.generated.Node;
-import gov.inl.generated.SGComponents.Component;
-import gov.inl.generated.SGComponents.Field;
-import gov.inl.generated.SGComponents.Usecase;
-import gov.inl.generated.SGComponents.UsecaseField;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-
+import java.awt.FlowLayout;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-public class XmlConverter {
-    Session session;
+public class XmlConverter extends JFrame{
+    DataAccessObject dao;
+
+    public void setInputFilename(String inputFilename) {
+        this.inputFilename = inputFilename;
+    }
+
+    public void setCommunicationOutputFilename(String communicationOutputFilename) {
+        CommunicationOutputFilename = communicationOutputFilename;
+    }
+
+    public void setTopologyOutputFilename(String topologyOutputFilename) {
+        TopologyOutputFilename = topologyOutputFilename;
+    }
+
     String inputFilename;
+    String CommunicationOutputFilename;
+    String TopologyOutputFilename;
+    FileSelectDialog dialog;
 
     public XmlConverter() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("IGCAPT");
-        EntityManager entityManager = emf.createEntityManager();
-        session = entityManager.unwrap(Session.class);
-        inputFilename = "50meter(xsd).xml";
+        super("Test using JFilePicker");
+        
+        dao = new DataAccessObject(inputFilename);
+         
+        setLayout(new FlowLayout());
+ 
+        dialog = new FileSelectDialog(this);
+        
+        add(dialog);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(520, 170);
+        setLocationRelativeTo(null);
+        
+
     }
 
-    public List<String> getCommunicationTable() {
-        List<String> lines = new ArrayList<>();
-
-        List<Usecase> usecases = session.createCriteria(Usecase.class).list();
-        List<Node> nodes = getAllNodesFromFile();
-        List<Component> components = getComponentsFromNodes(nodes);
-        Dictionary<Usecase, List<Component>> componentsByUsecase = new Hashtable<>();
-
-
-        for (Usecase usecase : usecases) {
-            Hashtable<Component, Integer> componentCountById = new Hashtable<>();
-
-
-
-            List<Component> validComponents = getComponentsForUsecase(usecase);
-            for (Component component : components) {
-                if(validComponents.contains(component)) {
-                    componentCountById.put(component, componentCountById.getOrDefault(component.getUuid(), 0) + 1);
-                }
-            }
-
-            for (Component component : componentCountById.keySet()) {
-                lines.add(String.format("%s,%s,%s", usecase.getName(), getPayloadForComponent(component, usecase), componentCountById.get(component)));
-            }
+    public void run() {
+        inputFilename = dialog.getInputFile();
+        dao.setInputFilename(inputFilename);
+        File file = new File(inputFilename);
+        if (file.exists()) {
+            CommunicationOutputFilename = file.getParentFile().getAbsolutePath() + "/Comunication.csv";
+            TopologyOutputFilename = file.getParentFile().getAbsolutePath() + "/Topology.csv";
+            generateCommunicationTable();
+            generateTopologyTable();
         }
-
-        return lines;
     }
 
-    private List<Node> getAllNodesFromFile(){
-        XmlConverter converter = new XmlConverter();
-        File file = converter.getFileFromResources(inputFilename);
+    public void generateCommunicationTable() {
+        List<String> communicationTable = getCommunicationTable();
 
+        writeToFile(communicationTable, CommunicationOutputFilename);
+
+    }
+
+    private List<String> getCommunicationTable() {
+        CommunicationTableGenerator generator = new CommunicationTableGenerator(dao);
+
+        return generator.generate();
+    }
+
+    public void generateTopologyTable() {
+        List<String> topologyTable = getTopologyTable();
+
+        writeToFile(topologyTable, TopologyOutputFilename);
+    }
+
+    private List<String> getTopologyTable() {
+        TopologyTableGenerator generator = new TopologyTableGenerator(dao);
+
+        return generator.generate();
+    }
+
+    private static void writeToFile(List<String> lines, String outputFileName) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Gen.class);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
 
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            Gen gen = (Gen) jaxbUnmarshaller.unmarshal(file);
-
-            return gen.getNodeList().getNodes();
-        } catch (Exception e) {
-
-        }
-        return new ArrayList<>();
-    }
-
-    private List<Component> getComponentsFromNodes(List<Node> nodes) {
-        List<Component> components = new ArrayList<>();
-
-        for (Node node : nodes) {
-            components.add(getComponentFromNode(node));
-        }
-
-        return components;
-    }
-
-    private Component getComponentFromId(String id) {
-        Criteria criteria = session.createCriteria(Component.class);
-        return (Component) criteria.add(Restrictions.eq("uuid", id)).uniqueResult();
-    }
-
-    private List<Component> getComponentsForUsecase(Usecase usecase) {
-        Criteria criteria = session.createCriteria(Component.class);
-        return criteria.add(Restrictions.eq("usecaseId", usecase.getId())).list();
-    }
-
-    private int getPayloadForComponent(Component component, Usecase usecase) {
-        List<Integer> fieldIdsForUsecase = getFieldIdsForUsecase(usecase);
-
-        int totalPayload = 0;
-
-        for (Field field : component.getFieldsById()) {
-            if(fieldIdsForUsecase.contains((int) field.getId())) {
-                totalPayload += field.getPayload();
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
             }
-        }
-        return totalPayload;
-    }
 
-    private List<Integer> getFieldIdsForUsecase(Usecase usecase) {
-        Criteria criteria = session.createCriteria(UsecaseField.class);
-        List<UsecaseField> usecaseFields = criteria.add(Restrictions.eq("usecaseId", usecase.getId())).list();
-
-        List<Integer> fieldIdsForUsecase = new ArrayList<>();
-
-        for (UsecaseField field :
-                usecaseFields) {
-            fieldIdsForUsecase.add((int) field.getFieldId());
-        }
-
-        return fieldIdsForUsecase;
-    }
-
-
-
-
-
-
-
-
-
-
-
-    private Component getComponentFromNode(Node node){
-        return getComponentFromId(node.getType());
-    }
-
-    private File getFileFromResources(String fileName) {
-        ClassLoader classLoader = getClass().getClassLoader();
-
-        URL resource = classLoader.getResource(fileName);
-        if (resource == null) {
-            throw new IllegalArgumentException("file is not found!");
-        } else {
-            return new File(resource.getFile());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
 
 
-    private String getDeviceTypeForNode(Node node){
-        Component component = getComponentFromNode(node);
-        return (String) component.getName();
-    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static void main(String[] args) {
-        XmlConverter converter = new XmlConverter();
+//        XmlConverter converter = new XmlConverter();
+//
+////        converter.generateCommunicationTable();
+////        converter.generateTopologyTable();
+////        converter.run();
+//        FileSelectDialog dialog = new FileSelectDialog();
+//        System.out.println("Done!");
 
-        converter.getCommunicationTable();
-
-
-
-//        File file = converter.getFileFromResources("50meter(xsd).xml");
-//
-//        try {
-//            JAXBContext jaxbContext = JAXBContext.newInstance(Gen.class);
-//
-//            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-//            Gen gen = (Gen) jaxbUnmarshaller.unmarshal(file);
-//
-//            for (Node node : gen.getNodeList().getNodes()) {
-//                String deviceType = converter.getDeviceTypeForNode(node);
-//                int cellRelayId;
-//                int sourceId = node.getId();
-//
-//
-//
-//
-//
-//
-//
-//            }
-//
-//            System.out.println("num nodes: " + gen.getNodeList().getNodes().size());
-//            System.out.println("num edges: " + gen.getEdgeList().getEdges().size());
-//
-//        } catch (JAXBException e) {
-//            e.printStackTrace();
-//        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new XmlConverter().setVisible(true);
+            }
+        });
+        
     }
 }

@@ -5,20 +5,20 @@ import java.util.Collection;
 
 @Entity
 public class Usecase {
-    private short id;
+    private Integer id;
     private String name;
-    private Short latency;
+    private Integer latency;
     private String description;
     private Collection<DataElement> dataElementsById;
     private Collection<UsecaseField> usecaseFieldsById;
 
     @Id
     @Column(name = "id")
-    public short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -34,11 +34,11 @@ public class Usecase {
 
     @Basic
     @Column(name = "latency")
-    public Short getLatency() {
+    public Integer getLatency() {
         return latency;
     }
 
-    public void setLatency(Short latency) {
+    public void setLatency(Integer latency) {
         this.latency = latency;
     }
 

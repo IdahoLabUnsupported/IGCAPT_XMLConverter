@@ -8,27 +8,27 @@ import java.util.Objects;
 
 @Entity
 public class EndPoint {
-    private Short id;
-    private Short componentDataId;
+    private Integer id;
+    private Integer componentDataId;
     private String endpoint;
 
     @Id
     @Column(name = "id")
-    public Short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Basic
     @Column(name = "componentDataId")
-    public Short getComponentDataId() {
+    public Integer getComponentDataId() {
         return componentDataId;
     }
 
-    public void setComponentDataId(Short componentDataId) {
+    public void setComponentDataId(Integer componentDataId) {
         this.componentDataId = componentDataId;
     }
 

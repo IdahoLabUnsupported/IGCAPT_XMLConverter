@@ -6,17 +6,17 @@ import java.util.Collection;
 
 @Entity
 public class ComponentList {
-    private Short id;
+    private Integer id;
     private Date date;
     private Collection<ComponentGroup> componentGroupsById;
 
     @Id
     @Column(name = "id")
-    public Short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

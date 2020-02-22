@@ -5,34 +5,34 @@ import javax.persistence.*;
 @Entity
 @Table(name = "component_usecase", schema = "main", catalog = "")
 public class ComponentUsecase {
-    private Short id;
-    private int usecaseId;
-    private int componentId;
+    private Integer id;
+    private Integer usecaseId;
+    private Integer componentId;
 
     @Id
     @Column(name = "id")
-    public Short getId() {
+    public Integer getId() {
         return id;
     }
-    public void setId(Short id) {this.id = id;}
+    public void setId(Integer id) {this.id = id;}
 
     @Basic
     @Column(name = "usecaseId")
-    public int getUsecaseId() {
+    public Integer getUsecaseId() {
         return usecaseId;
     }
 
-    public void setUsecaseId(int usecaseId) {
+    public void setUsecaseId(Integer usecaseId) {
         this.usecaseId = usecaseId;
     }
 
     @Basic
     @Column(name = "componentId")
-    public int getComponentId() {
+    public Integer getComponentId() {
         return componentId;
     }
 
-    public void setComponentId(int componentId) {
+    public void setComponentId(Integer componentId) {
         this.componentId = componentId;
     }
 

@@ -4,18 +4,18 @@ import javax.persistence.*;
 
 @Entity
 public class CollapseIntoData {
-    private Short id;
+    private Integer id;
     private int componentId;
     private String guid;
     private Component componentByComponentId;
 
     @Id
     @Column(name = "id")
-    public Short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

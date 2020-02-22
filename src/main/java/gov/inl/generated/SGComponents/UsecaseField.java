@@ -5,39 +5,39 @@ import javax.persistence.*;
 @Entity
 @Table(name = "usecase_field", schema = "main", catalog = "")
 public class UsecaseField {
-    private short id;
-    private short usecaseId;
-    private short fieldId;
+    private Integer id;
+    private Integer usecaseId;
+    private Integer fieldId;
     private Usecase usecaseByUsecaseId;
     private Field fieldByFieldId;
 
     @Id
     @Column(name = "id")
-    public short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Basic
     @Column(name = "usecaseId", insertable = false, updatable = false)
-    public short getUsecaseId() {
+    public Integer getUsecaseId() {
         return usecaseId;
     }
 
-    public void setUsecaseId(short usecaseId) {
+    public void setUsecaseId(Integer usecaseId) {
         this.usecaseId = usecaseId;
     }
 
     @Basic
     @Column(name = "fieldId", insertable = false, updatable = false)
-    public short getFieldId() {
+    public Integer getFieldId() {
         return fieldId;
     }
 
-    public void setFieldId(short fieldId) {
+    public void setFieldId(Integer fieldId) {
         this.fieldId = fieldId;
     }
 

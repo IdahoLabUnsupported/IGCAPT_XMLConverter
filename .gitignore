@@ -1,3 +1,8 @@
 .idea/
 target/
 lib/
+.classpath
+.project
+.settings
+bin
+nbactions.xml

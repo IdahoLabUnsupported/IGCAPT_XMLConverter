@@ -5,21 +5,21 @@ import javax.persistence.*;
 @Entity
 @Table(name = "data_element", schema = "main", catalog = "")
 public class DataElement {
-    private short id;
+    private Integer id;
     private String name;
-    private short payload;
-    private short maxLatency;
+    private Integer payload;
+    private Integer maxLatency;
     private String source;
-    private short fkUsecaseId;
+    private Integer fkUsecaseId;
     private Usecase usecaseByFkUsecaseId;
 
     @Id
     @Column(name = "id")
-    public short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -35,21 +35,21 @@ public class DataElement {
 
     @Basic
     @Column(name = "payload")
-    public short getPayload() {
+    public Integer getPayload() {
         return payload;
     }
 
-    public void setPayload(short payload) {
+    public void setPayload(Integer payload) {
         this.payload = payload;
     }
 
     @Basic
     @Column(name = "maxLatency")
-    public short getMaxLatency() {
+    public Integer getMaxLatency() {
         return maxLatency;
     }
 
-    public void setMaxLatency(short maxLatency) {
+    public void setMaxLatency(Integer maxLatency) {
         this.maxLatency = maxLatency;
     }
 
@@ -65,11 +65,11 @@ public class DataElement {
 
     @Basic
     @Column(name = "fk_usecase_id", insertable = false, updatable = false)
-    public short getFkUsecaseId() {
+    public Integer getFkUsecaseId() {
         return fkUsecaseId;
     }
 
-    public void setFkUsecaseId(short fkUsecaseId) {
+    public void setFkUsecaseId(Integer fkUsecaseId) {
         this.fkUsecaseId = fkUsecaseId;
     }
 

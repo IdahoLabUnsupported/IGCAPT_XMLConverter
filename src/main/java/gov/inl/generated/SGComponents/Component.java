@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 public class Component {
-    private Short id;
+    private Integer id;
     private Boolean aggregate;
     private Integer componentGroupId;
     private String iconPath;
@@ -20,11 +20,11 @@ public class Component {
 
     @Id
     @Column(name = "id")
-    public Short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

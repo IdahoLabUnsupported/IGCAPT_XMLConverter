@@ -5,20 +5,20 @@ import java.util.Collection;
 
 @Entity
 public class Field {
-    private short id;
+    private Integer id;
     private String name;
-    private short payload;
-    private Short componentId;
+    private Integer payload;
+    private Integer componentId;
     private Component componentByComponentId;
     private Collection<UsecaseField> usecaseFieldsById;
 
     @Id
     @Column(name = "id")
-    public short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -34,21 +34,21 @@ public class Field {
 
     @Basic
     @Column(name = "payload")
-    public short getPayload() {
+    public Integer getPayload() {
         return payload;
     }
 
-    public void setPayload(short payload) {
+    public void setPayload(Integer payload) {
         this.payload = payload;
     }
 
     @Basic
     @Column(name = "componentId", insertable = false, updatable = false)
-    public Short getComponentId() {
+    public Integer getComponentId() {
         return componentId;
     }
 
-    public void setComponentId(Short componentId) {
+    public void setComponentId(Integer componentId) {
         this.componentId = componentId;
     }
 
