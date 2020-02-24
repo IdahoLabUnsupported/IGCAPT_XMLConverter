@@ -39,6 +39,7 @@ public class FileSelectDialog extends javax.swing.JPanel {
         inputFileButton = new javax.swing.JButton();
         InputFilePath = new javax.swing.JTextField();
         RunButton = new javax.swing.JButton();
+        NotificationLbl = new javax.swing.JLabel();
 
         inputFileButton.setText("Select Input File");
         inputFileButton.addActionListener(new java.awt.event.ActionListener() {
@@ -60,11 +61,12 @@ public class FileSelectDialog extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(InputFilePath)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(NotificationLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(InputFilePath, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(inputFileButton)
                             .addComponent(RunButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -78,7 +80,9 @@ public class FileSelectDialog extends javax.swing.JPanel {
                 .addComponent(inputFileButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(InputFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(NotificationLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(RunButton)
                 .addContainerGap())
         );
@@ -93,13 +97,14 @@ public class FileSelectDialog extends javax.swing.JPanel {
 
     private void RunButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RunButtonActionPerformed
         if(!getInputFile().isBlank()) {
-            converter.run();
+            NotificationLbl.setText(converter.run());
         }
     }//GEN-LAST:event_RunButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField InputFilePath;
+    private javax.swing.JLabel NotificationLbl;
     private javax.swing.JButton RunButton;
     private javax.swing.JButton inputFileButton;
     // End of variables declaration//GEN-END:variables

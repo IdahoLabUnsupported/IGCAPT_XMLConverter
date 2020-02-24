@@ -41,13 +41,11 @@ public class XmlConverter extends JFrame{
         
         add(dialog);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(520, 170);
+        setSize(520, 190);
         setLocationRelativeTo(null);
-        
-
     }
 
-    public void run() {
+    public String run() {
         inputFilename = dialog.getInputFile();
         dao.setInputFilename(inputFilename);
         File file = new File(inputFilename);
@@ -56,7 +54,9 @@ public class XmlConverter extends JFrame{
             TopologyOutputFilename = file.getParentFile().getAbsolutePath() + "/Topology.csv";
             generateCommunicationTable();
             generateTopologyTable();
+            return "Finished creating CSVs";
         }
+        return "Input file does not exist";
     }
 
     public void generateCommunicationTable() {

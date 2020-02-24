@@ -38,14 +38,12 @@ public class TopologyTableGenerator implements TableGenerator {
                 e.printStackTrace();
             }
         }
-
         return lines;
     }
 
     public String getLineForNode(Node node) throws NotFoundException {
         Component component = dao.getComponentFromNode(node);
         Node cellRelay = getCellRelayForNode(node);
-
 
         String deviceType = component == null ? "Unknown Device Type" : component.getName();;
 
