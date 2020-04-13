@@ -11,11 +11,12 @@ import java.util.List;
 
 public class TopologyTableGenerator implements TableGenerator {
 
-    private final List<Component> components;
+    private final List<Component> components; // Not unique.
     private final List<Node> nodes;
     private final List<Edge> edges;
     private DataAccessObject dao;
     private Hashtable<Node, Integer> localCounts;
+    private final List<Component> uniqueComponents;
 
     public TopologyTableGenerator(DataAccessObject dao) {
         this.dao = dao;
@@ -24,68 +25,82 @@ public class TopologyTableGenerator implements TableGenerator {
         edges = dao.getAllEdgesFromFile();
         components = dao.getComponentsFromNodes(nodes);
         localCounts = new Hashtable<>();
+        uniqueComponents = new ArrayList<>();
     }
 
     @Override
     public List<String> generate() {
+        
         List<String> lines = new ArrayList<>();
-        for (Node node : nodes) {
-            try {
-                String line = getLineForNode(node);
+        
+        // Write out component types list
+        int i=0;
+        for (Component comp : components)
+        {
+            if (!uniqueComponents.contains(comp))
+            {
+                uniqueComponents.add(comp);
+                
+                String line = comp.getName() + "," + Integer.toString(i);
                 lines.add(line);
-            } catch (NotFoundException e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
+                i++;
             }
+        }
+        
+        lines.add("");
+        
+        // Write out node connectivity
+        for (Node node : nodes) {
+            String line = getLineForNode(node);
+            lines.add(line);
         }
         return lines;
     }
 
-    public String getLineForNode(Node node) throws NotFoundException {
+    public String getLineForNode(Node node) {
         Component component = dao.getComponentFromNode(node);
         Node cellRelay = getCellRelayForNode(node);
 
-        String deviceType = component == null ? "Unknown Device Type" : component.getName();;
+        int deviceType = (uniqueComponents.contains(component)) ? uniqueComponents.indexOf(component) : -1;
 
-        Short cellRelayId = cellRelay.getId();
-        Short rawSourceId = node.getId();
+        int cellRelayId = (cellRelay != null)?cellRelay.getId():-1;
 
-        Short rawDestinationId;
-
-        try {
-            Edge edge = getEdgeWithSourceId(node.getId());
-            rawDestinationId = edge.getTarget();
-        } catch (NotFoundException e) {
-            rawDestinationId = node.getId();
-
-        }
+        int rawSourceId;
+        int rawDestinationId;
         int localSourceId;
-        Short localDestinationId = 0;
+        int localDestinationId = 0;
+        
+        localSourceId = nodes.indexOf(node);
+        rawSourceId = node.getId();
+        Node parentNode = getParentForNode(node);
+        localDestinationId = (parentNode !=null)?nodes.indexOf(parentNode):localSourceId;
+        rawDestinationId = (parentNode != null)?parentNode.getId():rawSourceId;
 
-         if (node == cellRelay){
-             localSourceId = 0;
-         } else {
-             Integer count = localCounts.getOrDefault(cellRelay, 0);
-             localSourceId = count + 1;
-             localCounts.put(cellRelay, count + 1);
-         }
-
-         return String.format("%s,%d,%d,%d,%d,%d", deviceType, cellRelayId, rawSourceId, rawDestinationId, localSourceId, localDestinationId);
+         return String.format("%d,%d,%d,%d,%d,%d", deviceType, cellRelayId, rawSourceId, rawDestinationId, localSourceId, localDestinationId);
     }
 
-    private Node getCellRelayForNode(Node node) throws NotFoundException {
+    private Node getCellRelayForNode(Node node) {
         NodeTracer tracer = new NodeTracer(node, nodes, edges, dao);
         return tracer.getCellRelay();
     }
 
-    private Edge getEdgeWithSourceId(Short id) throws NotFoundException {
+    private Node getParentForNode(Node node) {
+        NodeTracer tracer = new NodeTracer(node, nodes, edges, dao);
+        return  tracer.getParentNode(node);
+    }
+
+    private Edge getEdgeWithSourceId(Short id) {
+        
+        Edge returnval = null;
+        
         for (Edge edge : edges) {
             if (edge.getSource() == id) {
-                return edge;
+                returnval = edge;
+                break;
             }
         }
 
-        throw new NotFoundException(String.format("Couldn't find edge with source %d", id));
+        return returnval;
     }
 
 }

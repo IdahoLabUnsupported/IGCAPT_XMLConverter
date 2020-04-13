@@ -27,57 +27,80 @@ public class NodeTracer {
     }
 
 
-    public Node getCellRelay() throws NotFoundException {
-        Short relayId = getEndpointForNode(startNode);
+    public Node getCellRelay() {
+        int relayId = getRelayForNode(startNode);
+        Node returnval = null;
+        
+        if (relayId > -1) {
+            returnval = getNodeWithId(relayId);
+        }
 
-        return getNodeWithId(relayId);
+        return returnval;
     }
 
-    private Node getParentNode(Node node) throws NotFoundException {
+    public Node getParentNode(Node node) {
+        
+        Node returnval = null;
         Edge edge = getEdgeWithSourceId(node.getId());
-        return getNodeWithId(edge.getTarget());
+        
+        if (edge!=null){
+            returnval = getNodeWithId(edge.getTarget());
+        }
+        
+        return returnval;
     }
 
-    private Edge getEdgeWithSourceId(Short id) throws NotFoundException {
+    private Edge getEdgeWithSourceId(int id) {
+        
+        Edge returnval = null;
+        
         for (Edge edge : edges) {
             if (edge.getSource() == id) {
-                return edge;
-            }
-        }
-
-        throw new NotFoundException(String.format("Couldn't find edge with source %d", id));
-    }
-
-    private Node getNodeWithId(Short id) throws NotFoundException {
-        for (Node node : nodes) {
-            if (node.getId() == id) {
-                return node;
-            }
-        }
-
-        throw new NotFoundException(String.format("Couldn't find node with source %d", id));
-    }
-
-    private Short getEndpointForNode(Node node) {
-        EndPoints endPoints = node.getEndPoints();
-        List<Short> endPoint = endPoints.getEndPoint();
-
-        if(endPoint != null && endPoint.size() > 0) {
-            return endPoint.get(0);
-        }
-
-        Node currentNode;
-        Node parentNode = node;
-
-        while(true) {
-            currentNode = parentNode;
-            try {
-                parentNode = getParentNode(currentNode);
-            } catch (NotFoundException e) {
+                returnval = edge;
                 break;
             }
         }
-        return currentNode.getId();
+
+        return returnval;
+    }
+
+    private Node getNodeWithId(int id) {
+        
+        Node returnval = null;
+        
+        for (Node node : nodes) {
+            if (node.getId() == id) {
+                returnval = node;
+                break;
+            }
+        }
+
+        return returnval;
+    }
+    
+    private int getRelayForNode(Node node) {
+ 
+        Node currentNode;
+        Node parentNode = node;
+        Component comp;
+        int relayId = -1;
+
+        while(true) {
+            currentNode = parentNode;
+            comp = dao.getComponentFromNode(currentNode);
+            if (comp.getName().equals("Cell Relay")) {
+                 relayId = currentNode.getId();
+                 break;
+             }
+
+             parentNode = getParentNode(currentNode);
+
+             if (parentNode == null)
+             {
+                 break;
+             }
+        }
+        return relayId;
 
     }
 }

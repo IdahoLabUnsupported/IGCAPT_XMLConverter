@@ -34,14 +34,14 @@ public class Edge {
     @XmlElement(required = true)
     protected BigDecimal capacity;
     @XmlAttribute(name = "id", required = true)
-    @XmlSchemaType(name = "unsignedByte")
-    protected short id;
+    @XmlSchemaType(name = "integer")
+    protected int id;
     @XmlAttribute(name = "source", required = true)
-    @XmlSchemaType(name = "unsignedByte")
-    protected short source;
+    @XmlSchemaType(name = "integer")
+    protected int source;
     @XmlAttribute(name = "target", required = true)
-    @XmlSchemaType(name = "unsignedByte")
-    protected short target;
+    @XmlSchemaType(name = "integer")
+    protected int target;
 
     public BigDecimal getCapacity() {
         return capacity;
@@ -50,24 +50,24 @@ public class Edge {
         this.capacity = value;
     }
 
-    public short getId() {
+    public int getId() {
         return id;
     }
-    public void setId(short value) {
+    public void setId(int value) {
         this.id = value;
     }
 
-    public short getSource() {
+    public int getSource() {
         return source;
     }
-    public void setSource(short value) {
+    public void setSource(int value) {
         this.source = value;
     }
 
-    public short getTarget() {
+    public int getTarget() {
         return target;
     }
-    public void setTarget(short value) {
+    public void setTarget(int value) {
         this.target = value;
     }
 

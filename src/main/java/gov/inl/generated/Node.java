@@ -66,8 +66,8 @@ import java.util.List;
 })
 public class Node {
 
-    @XmlSchemaType(name = "unsignedByte")
-    protected short id;
+    @XmlSchemaType(name = "integer")
+    protected int id;
     @XmlElement(required = true)
     protected String type;
     protected boolean enableDataSending;
@@ -75,9 +75,9 @@ public class Node {
     protected boolean isAggregate;
     @XmlElement(type = Boolean.class)
     protected List<Boolean> isCollapsed;
-    @XmlSchemaType(name = "unsignedShort")
+    @XmlSchemaType(name = "integer")
     protected int payload;
-    @XmlSchemaType(name = "unsignedShort")
+    @XmlSchemaType(name = "integer")
     protected int maxLatency;
     @XmlElement(required = true)
     protected BigDecimal xCoord;
@@ -92,10 +92,10 @@ public class Node {
     @XmlElement(required = true)
     protected EndPoints endPoints;
 
-    public short getId() {
+    public int getId() {
         return id;
     }
-    public void setId(short value) {
+    public void setId(int value) {
         this.id = value;
     }
 

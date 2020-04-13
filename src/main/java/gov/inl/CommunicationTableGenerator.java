@@ -11,12 +11,22 @@ import java.util.List;
 public class CommunicationTableGenerator implements TableGenerator {
     private DataAccessObject dao;
     private List<Component> components;
+    private List<Component> uniqueComponents;
 
     public CommunicationTableGenerator(DataAccessObject dao) {
         this.dao = dao;
 
         List<Node> nodes = dao.getAllNodesFromFile();
         components = dao.getComponentsFromNodes(nodes);
+        uniqueComponents = new ArrayList<>();
+        
+        for (Component comp : components)
+        {
+            if (!uniqueComponents.contains(comp))
+            {
+                uniqueComponents.add(comp);
+            }
+        }
 
     }
 
@@ -39,7 +49,8 @@ public class CommunicationTableGenerator implements TableGenerator {
         Hashtable<Component, Integer> componentCount = getComponentCountForUsecase(usecase);
 
         for (Component component : componentCount.keySet()) {
-            lines.add(String.format("%s,%s,%s", usecase.getName(), dao.getPayloadForComponent(component, usecase), componentCount.get(component)));
+            lines.add(String.format("%s,%s,%s,%s", usecase.getName(), dao.getPayloadForComponent(component, usecase),
+                    componentCount.get(component), uniqueComponents.indexOf(component)));
         }
 
         return lines;
